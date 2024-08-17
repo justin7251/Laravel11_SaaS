@@ -8,6 +8,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+use App\Observers\UserObserver;
+
+#[ObservedBy(UserObserver::class)]
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -42,4 +46,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function descreaseCredits(int $credits): self
+    {
+        $this->available_credits -= $credits;
+        $this->save();
+        return $this;
+    }
 }
